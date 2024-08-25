@@ -121,8 +121,6 @@ export PATH=$PATH:/usr/local/go/bin
 
 export PATH=$PATH:/usr/lib
 
-eval "$(starship init bash)"
-
 tmuxo() {
     if [ "$1" != "" ]
     then
@@ -147,6 +145,7 @@ tmuxd() {
 alias lock='~/./lock.sh'
 alias ll='ls -ltrah'
 
+
 GCC_PATH=~/Developer/gcc-arm-none-eabi-10-2020-q4-major-x86_64-linux/bin
 export PATH=$GCC_PATH:$PATH
 
@@ -158,6 +157,17 @@ export PATH=/home/dan/.local/bin:/home/dan/Developer/gcc-arm-none-eabi-10-2020-q
 export BUN_INSTALL="$HOME/.bun"
 export PATH=$BUN_INSTALL/bin:$PATH
 
+# bun
+export BUN_INSTALL="$HOME/.bun"
+export PATH=$BUN_INSTALL/bin:$PATH
+
+# bun
+export BUN_INSTALL="$HOME/.bun"
+export PATH=$BUN_INSTALL/bin:$PATH
+
 export NVM_DIR="$HOME/.nvm"
 [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
 [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
+# source "/home/dan/Downloads/emsdk/emsdk_env.sh"
+
+source /home/dan/.config/nvim/setenv.sh

@@ -38,6 +38,33 @@ vim.opt.number = true
 vim.opt.relativenumber = true
 vim.opt.wrap = false
 
+-- Set default tab and indent settings
+vim.opt.tabstop = 2
+vim.opt.shiftwidth = 2
+vim.opt.expandtab = true
+
+-- Set specific settings for Python and Rust
+local function set_indent(spaces)
+  return function()
+    vim.bo.tabstop = spaces
+    vim.bo.shiftwidth = spaces
+    vim.bo.expandtab = true
+  end
+end
+
+local indent_settings = {
+  [2] = { 'javascript', 'typescript', 'vue', 'html', 'css', 'json', 'yaml' },
+  [4] = { 'python', 'rust', 'go' },
+  -- add more as needed
+}
+
+for spaces, filetypes in pairs(indent_settings) do
+  vim.api.nvim_create_autocmd('FileType', {
+    pattern = filetypes,
+    callback = set_indent(spaces),
+  })
+end
+
 -- Enable mouse mode, can be useful for resizing splits for example!
 vim.opt.mouse = 'a'
 
@@ -147,7 +174,6 @@ vim.opt.rtp:prepend(lazypath)
 -- NOTE: Here is where you install your plugins.
 require('lazy').setup({
   -- NOTE: Plugins can be added with a link (or for a github repo: 'owner/repo' link).
-  'tpope/vim-sleuth', -- Detect tabstop and shiftwidth automatically
 
   -- NOTE: Plugins can also be added by using a table,
   -- with the first argument being the link and the following
@@ -374,6 +400,8 @@ require('lazy').setup({
           -- Customize LSP hover handler
           vim.lsp.handlers['textDocument/hover'] = vim.lsp.with(vim.lsp.handlers.hover, {
             border = 'rounded',
+            focusable = false,
+            close_events = { 'BufLeave', 'CursorMoved', 'InsertEnter', 'FocusLost' },
           })
 
           -- NOTE: Remember that Lua is a real programming language, and as such it is possible
@@ -498,9 +526,14 @@ require('lazy').setup({
         -- Some languages (like typescript) have entire language plugins that can be useful:
         --    https://github.com/pmizio/typescript-tools.nvim
         --
-        -- But for many setups, the LSP (`tsserver`) will work just fine
-        tsserver = {},
-        --
+        tsserver = {
+          init_options = {
+            preferences = {
+              tabSize = 2,
+              indentSize = 2,
+            },
+          },
+        },
         volar = {
           filetypes = { 'typescript', 'javascript', 'vue' },
           init_options = {
@@ -709,16 +742,16 @@ require('lazy').setup({
     'rebelot/kanagawa.nvim',
     priority = 1000,
     init = function()
-      -- vim.cmd.colorscheme 'kanagawa-dragon'
-      -- vim.cmd.hi 'Comment gui=none'
+      vim.cmd.colorscheme 'kanagawa-wave'
+      vim.cmd.hi 'Comment gui=none'
     end,
   },
   {
     'folke/tokyonight.nvim',
     priority = 1000,
     init = function()
-      vim.cmd.colorscheme 'tokyonight-night'
-      vim.cmd.hi 'Comment gui=none'
+      -- vim.cmd.colorscheme 'tokyonight-night'
+      -- vim.cmd.hi 'Comment gui=none'
     end,
   },
 
@@ -806,11 +839,13 @@ require('lazy').setup({
   -- require 'kickstart.plugins.gitsigns', -- adds gitsigns recommend keymaps
   -- require 'kickstart.plugins.autopairs',
   -- require 'kickstart.plugins.lualine',
+
   require 'plugins.bufferline',
   require 'plugins.neo-tree',
   require 'plugins.floaterm',
   require 'plugins.blankline',
   require 'plugins.autopairs',
+  require 'plugins.avante',
 
   -- NOTE: The import below can automatically add your own plugins, configuration, etc from `lua/custom/plugins/*.lua`
   --    This is the easiest way to modularize your config.
