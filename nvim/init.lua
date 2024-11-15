@@ -19,6 +19,9 @@
 =====================================================================
 --]]
 
+-- escape insert mode
+vim.keymap.set('i', 'jk', '<Esc>', { noremap = true, silent = true })
+
 -- Set <space> as the leader key
 -- See `:help mapleader`
 --  NOTE: Must happen before plugins are loaded (otherwise wrong leader will be used)
@@ -395,8 +398,8 @@ require('lazy').setup({
           -- Function to show diagnostics in a floating window
           local function show_diagnostics()
             local opts = {
-              focusable = false,
-              close_events = { 'BufLeave', 'CursorMoved', 'InsertEnter', 'FocusLost' },
+              focusable = true, -- changed to true
+              close_events = { 'InsertEnter' }, -- only close on insert
               border = 'rounded',
               source = 'always', -- show source in diagnostics
               prefix = ' ',
@@ -408,8 +411,21 @@ require('lazy').setup({
           vim.lsp.handlers['textDocument/hover'] = vim.lsp.with(vim.lsp.handlers.hover, {
             border = 'rounded',
             focusable = true,
-            focus = false,
+            focus = true, -- changed to true
           })
+
+          -- Add keybind to focus floating windows
+          local function focus_float()
+            for _, win in ipairs(vim.api.nvim_list_wins()) do
+              if vim.api.nvim_win_get_config(win).relative ~= '' then
+                vim.api.nvim_set_current_win(win)
+                return
+              end
+            end
+          end
+
+          -- map <leader>lf to focus floating window
+          vim.keymap.set('n', '<leader>lf', focus_float, { buffer = event.buf, desc = 'LSP: Focus floating window' })
 
           -- NOTE: Remember that Lua is a real programming language, and as such it is possible
           -- to define small helper and utility functions so you don't have to repeat yourself.
@@ -533,14 +549,14 @@ require('lazy').setup({
         -- Some languages (like typescript) have entire language plugins that can be useful:
         --    https://github.com/pmizio/typescript-tools.nvim
         --
-        tsserver = {
-          init_options = {
-            preferences = {
-              tabSize = 2,
-              indentSize = 2,
-            },
-          },
-        },
+        -- tsserver = {
+        --   init_options = {
+        --     preferences = {
+        --       tabSize = 2,
+        --       indentSize = 2,
+        --     },
+        --   },
+        -- },
         volar = {
           filetypes = { 'typescript', 'javascript', 'vue' },
           init_options = {
@@ -852,7 +868,7 @@ require('lazy').setup({
   require 'plugins.floaterm',
   require 'plugins.blankline',
   require 'plugins.autopairs',
-  require 'plugins.avante',
+  -- require 'plugins.avante',
 
   -- NOTE: The import below can automatically add your own plugins, configuration, etc from `lua/custom/plugins/*.lua`
   --    This is the easiest way to modularize your config.
