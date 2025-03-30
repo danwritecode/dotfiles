@@ -536,6 +536,20 @@ require('lazy').setup({
             },
           },
         },
+        rust_analyzer = {
+          settings = {
+            ['rust-analyzer'] = {
+              procMacro = {
+                ignored = {
+                  leptos_macro = {
+                    -- 'component',
+                    'server',
+                  },
+                },
+              },
+            },
+          },
+        },
       }
 
       -- Mason setup
@@ -811,7 +825,9 @@ require('lazy').setup({
   require 'plugins.floaterm',
   require 'plugins.blankline',
   require 'plugins.autopairs',
-  -- require 'plugins.avante',
+  require 'plugins.supermaven',
+  require 'plugins.leptos',
+  require 'plugins.harpoon',
 
   -- NOTE: The import below can automatically add your own plugins, configuration, etc from `lua/custom/plugins/*.lua`
   --    This is the easiest way to modularize your config.
